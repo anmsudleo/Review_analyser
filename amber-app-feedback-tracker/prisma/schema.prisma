@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  source      String
+  reviewId    String   @unique
+  author      String?
+  rating      Int
+  title       String?
+  content     String
+  category    String?
+  sentiment   String?
+  appVersion  String?
+  reviewDate  DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
