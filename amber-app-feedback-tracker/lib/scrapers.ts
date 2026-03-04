@@ -184,8 +184,12 @@ export async function fetchAndStoreAppStoreReviews() {
 
   let created = 0;
   for (const r of result) {
-    const rating = r.rating;
-    const rawDate = r.date instanceof Date ? r.date : new Date(r.date as any);
+    // app-store-scraper returns `score` and `updated` in practice
+    const rating = (r as any).score ?? (r as any).rating;
+    const dateValue = (r as any).updated ?? (r as any).date;
+    const rawDate =
+      dateValue instanceof Date ? dateValue : new Date(dateValue as any);
+
     if (!rating || Number.isNaN(rating)) {
       // Skip reviews without a valid rating
       continue;

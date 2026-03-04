@@ -7,8 +7,12 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
+const rawUrl = process.env.DATABASE_URL;
+// Strip query params like ?sslmode=require so we can control TLS via `ssl` below
+const connectionString = rawUrl ? rawUrl.split("?")[0] : undefined;
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString,
   ssl: {
     rejectUnauthorized: false,
   },
@@ -23,28 +27,8 @@ export const prisma =
     log: ["error", "warn"],
   });
 
-// #region agent log
-fetch("http://127.0.0.1:7926/ingest/8c200ea0-aabb-4cb1-b929-53d2dfd3c250", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "X-Debug-Session-Id": "af86e9",
-  },
-  body: JSON.stringify({
-    sessionId: "af86e9",
-    runId: "init",
-    hypothesisId: "H3",
-    location: "lib/prisma.ts:26",
-    message: "Prisma client constructed",
-    data: {
-      hasConnectionString: !!process.env.DATABASE_URL,
-    },
-    timestamp: Date.now(),
-  }),
-}).catch(() => {});
-// #endregion
-
 if (process.env.NODE_ENV !== "production") {
   global.prisma = prisma;
 }
+
 
