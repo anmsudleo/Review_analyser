@@ -1,5 +1,5 @@
 import gplay from "google-play-scraper";
-import appStore, { Review as AppStoreReview } from "app-store-scraper";
+import appStore from "app-store-scraper";
 import { categorizeReview, sentimentFromRating } from "./reviewCategorizer";
 import { prisma } from "./prisma";
 
@@ -62,7 +62,7 @@ export async function fetchAndStorePlayStoreReviews() {
     appId,
     lang: "en",
     country: "in",
-    sort: gplay.sort.NEWEST,
+    sort: (gplay as any).sort.NEWEST,
     num: 100,
     paginate: false,
   });
@@ -89,7 +89,8 @@ export async function fetchAndStorePlayStoreReviews() {
   let created = 0;
   for (const r of result.data) {
     const rating = r.score;
-    const rawDate = r.date instanceof Date ? r.date : new Date(r.date);
+    const dateValue = (r as any).date;
+    const rawDate = dateValue instanceof Date ? dateValue : new Date(dateValue);
     if (!rating || Number.isNaN(rating)) {
       // Skip reviews without a valid rating
       continue;
@@ -175,7 +176,7 @@ export async function fetchAndStoreAppStoreReviews() {
   }).catch(() => {});
   // #endregion
 
-  const result: AppStoreReview[] = await appStore.reviews({
+  const result: any[] = await appStore.reviews({
     id: appId,
     sort: appStore.sort.RECENT,
     page: 1,
