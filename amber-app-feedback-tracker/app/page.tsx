@@ -469,25 +469,33 @@ export default function DashboardPage() {
               <CardTitle>Reviews by Category</CardTitle>
             </CardHeader>
             <CardContent className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={categoryPieData}
-                    dataKey="value"
-                    nameKey="name"
-                    outerRadius={80}
-                    label
-                  >
-                    {categoryPieData.map((entry) => (
-                      <Cell
-                        key={entry.key}
-                        fill={CATEGORY_COLORS[entry.key] ?? "#64748B"}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              {categoryPieData.length === 0 || loadingStats ? (
+                <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+                  {loadingStats
+                    ? "Loading category insights…"
+                    : "No data yet. Fetch reviews to see issue categories."}
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={categoryPieData}
+                      dataKey="value"
+                      nameKey="name"
+                      outerRadius={80}
+                      label
+                    >
+                      {categoryPieData.map((entry) => (
+                        <Cell
+                          key={entry.key}
+                          fill={CATEGORY_COLORS[entry.key] ?? "#64748B"}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
             </CardContent>
           </Card>
           <Card className="border-border/60 bg-card/70 shadow-sm backdrop-blur">
@@ -495,15 +503,23 @@ export default function DashboardPage() {
               <CardTitle>Rating Distribution</CardTitle>
             </CardHeader>
             <CardContent className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={ratingBarData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
-                  <XAxis dataKey="rating" />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#F59E0B" />
-                </BarChart>
-              </ResponsiveContainer>
+              {ratingBarData.length === 0 || loadingStats ? (
+                <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+                  {loadingStats
+                    ? "Loading rating distribution…"
+                    : "No ratings yet. Fetch reviews to analyze distribution."}
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={ratingBarData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                    <XAxis dataKey="rating" />
+                    <YAxis allowDecimals={false} />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#0ea5e9" />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </CardContent>
           </Card>
           <Card className="border-border/60 bg-card/70 shadow-sm backdrop-blur md:col-span-2">
@@ -511,21 +527,29 @@ export default function DashboardPage() {
               <CardTitle>Reviews over Time (all)</CardTitle>
             </CardHeader>
             <CardContent className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={lineData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
-                  <XAxis dataKey="date" />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#F59E0B"
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              {lineData.length === 0 || loadingStats ? (
+                <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+                  {loadingStats
+                    ? "Building timeline…"
+                    : "No timeline yet. Fetch reviews to see trends over time."}
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={lineData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                    <XAxis dataKey="date" />
+                    <YAxis allowDecimals={false} />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="count"
+                      stroke="#0ea5e9"
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
             </CardContent>
           </Card>
         </section>

@@ -19,5 +19,9 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
-  "registries": {}
+  "registries": {
+    "@ss-themes": {
+      "url": "https://shadcnstudio.com/r/{name}.json"
+    }
+  }
 }
