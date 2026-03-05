@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+type GroupByCategory = { category: string | null; _count: { _all: number } };
+
 export async function GET() {
   try {
     const [total, avg, byCategory, bySentiment, byRating, byDate] =
@@ -28,10 +30,14 @@ export async function GET() {
       ]);
 
     // Compute most common issue category (excluding null)
-    const issueCategories = byCategory.filter((c) => c.category);
+    const issueCategories = (byCategory as GroupByCategory[]).filter(
+      (c: GroupByCategory) => c.category
+    );
     const mostCommon =
-      issueCategories.sort((a, b) => b._count._all - a._count._all)[0]
-        ?.category ?? null;
+      issueCategories.sort(
+        (a: GroupByCategory, b: GroupByCategory) =>
+          b._count._all - a._count._all
+      )[0]?.category ?? null;
 
     return NextResponse.json({
       total,
